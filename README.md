@@ -19,6 +19,7 @@ A lightweight PHP library for managing worker pools with shared memory and task 
 
 Unlike traditional php worker pools where new processes are spawned for each task (or copy part of queue), this pool uses a more efficient approach. Worker processes are **forked once** and then continuously process tasks from a **shared, centralized queue**. This eliminates the overhead of creating new processes for every task, significantly improving performance, especially in high-load scenarios. By reusing worker processes, this solution offers faster task processing and better resource utilization compared to conventional worker pools.
 
+Additionally, by using a **System V message queue**, tasks don't necessarily have to be sent from PHP. The queue can be accessed and tasks can be added from any other language or platform that supports System V message queues. This makes the solution highly flexible and allows seamless integration with other systems and technologies.
 
 ## How It Works
 
