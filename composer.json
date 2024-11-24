@@ -1,0 +1,19 @@
+{
+    "name": "white-rabbit-1-sketch/php-worker-pool",
+    "description": "A lightweight PHP library to manage a pool of workers for parallel task execution. This library allows you to easily manage worker threads, process tasks concurrently, and optimize your application’s performance by executing multiple tasks in parallel. Ideal for background jobs, batch processing, or any task that benefits from concurrent execution.",
+    "autoload": {
+        "psr-4": {
+            "PhpWorkerPool\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mikhail Chuloshnikov",
+            "email": "sky.inevermind@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "opis/closure": "^3.6"
+    }
+}
