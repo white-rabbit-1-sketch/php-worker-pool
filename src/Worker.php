@@ -13,7 +13,7 @@ class Worker
 
     public function start(): void
     {
-        while ($task = $this->queue->get()) {
+        while ($task = $this->queue->pop()) {
             $task->execute();
         }
     }

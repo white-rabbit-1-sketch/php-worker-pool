@@ -1,10 +1,11 @@
-# PHP Worker Pool via System V Message Queues
+# PHP Worker Pool
 
-A lightweight PHP library for managing worker pools with shared memory and task queues.
+A lightweight PHP library for managing worker pools with shared memory and task queues using System V Message Queues and Redis
 
 ## Features
 
 - **System V Message Queues** for efficient inter-process communication.
+- **Redis Queue** for efficient redistributed handling.
 - Simple worker pool implementation using process forking.
 - Supports closures and custom task implementations via `TaskInterface`.
 - Graceful handling of blocking operations.
@@ -50,36 +51,66 @@ To install the PHP Worker Pool library, use Composer:
 composer require white-rabbit-1-sketch/php-worker-pool
 ```
 
-### Producer
+### Examples
 
-Add tasks to the queue using `ClosureTask`:
+Exampla for Sys V Queue:
 
 ```php
 <?php
 
-use PhpWorkerPool\Queue;
 use PhpWorkerPool\ClosureTask;
 use PhpWorkerPool\Pool;
+use PhpWorkerPool\Queue\SysVQueue;
 
-require_once "vendor/autoload.php";
+require_once "../vendor/autoload.php";
 
-$queue = new Queue(1234567);
-
-for ($i = 0; $i < 20; $i++) {
-    $queue->add(new ClosureTask(function () {
-        echo microtime() . PHP_EOL;
-        sleep(5);
-    }));
-}
+$queue = new SysVQueue(1234567);
 
 $pool = new Pool($queue);
 $pool->start();
 
-// if you'd like you can add tasks after pool is started too
-$queue->add(new ClosureTask(function () {
-    echo microtime() . PHP_EOL;
-    sleep(5);
-}));
+for ($i = 0; $i < 20; $i++) {
+    $queue->push(new ClosureTask(function () {
+        echo microtime() . PHP_EOL;
+        sleep(1);
+    }));
+}
 
 $pool->wait();
+$pool->stop();
+```
+
+Exampla for Redis Queue:
+
+```php
+<?php
+
+use PhpWorkerPool\ClosureTask;
+use PhpWorkerPool\Pool;
+use PhpWorkerPool\Queue\RedisQueue;
+use Predis\Client as RedisClient;
+
+require_once "../vendor/autoload.php";
+
+$redisClient = new RedisClient([
+    'scheme' => 'tcp',
+    'host'   => 'localhost',
+    'port'   => 6379,
+]);
+$redisClient->connect();
+$queue = new RedisQueue($redisClient, "test-queue", 123);
+
+$pool = new Pool($queue);
+$pool->start();
+
+for ($i = 0; $i < 20; $i++) {
+    $queue->push(new ClosureTask(function () {
+        echo microtime() . PHP_EOL;
+        sleep(1);
+    }));
+}
+
+$pool->wait();
+$pool->stop();
+
 ```

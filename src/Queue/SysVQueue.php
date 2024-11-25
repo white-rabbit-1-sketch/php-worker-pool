@@ -1,8 +1,10 @@
 <?php
 
-namespace PhpWorkerPool;
+namespace PhpWorkerPool\Queue;
 
-class Queue implements QueueInterface
+use PhpWorkerPool\TaskInterface;
+
+class SysVQueue extends AbstractQueue
 {
     protected const MAX_MESSAGE_SIZE = 1024;
     protected const MESSAGE_TYPE = 1;
@@ -14,7 +16,6 @@ class Queue implements QueueInterface
 
     public function __construct(
         int $key,
-        bool $recreateQueue = true,
         int $maxMessageSize = self::MAX_MESSAGE_SIZE,
         int $messageType = self::MESSAGE_TYPE,
     ) {
@@ -22,45 +23,38 @@ class Queue implements QueueInterface
         $this->messageType = $messageType;
         $this->maxMessageSize = $maxMessageSize;
 
-        if (msg_queue_exists($this->key) && $recreateQueue) {
-            msg_remove_queue(msg_get_queue($this->key));
-        }
-
         $this->queue = msg_get_queue($this->key);
         if (!$this->queue) {
             throw new \RuntimeException('Unable to create or access message queue.');
         }
     }
 
-    public function add(TaskInterface $task): void
+    public function push(TaskInterface $task): void
     {
-        $serializedTask = \Opis\Closure\serialize($task);
-        if (!msg_send($this->queue, $this->messageType, $serializedTask)) {
+        if (!msg_send($this->queue, $this->messageType, $this->serialize($task))) {
             throw new \RuntimeException('Failed to add task to the queue.');
         }
     }
 
-    public function get(): ?TaskInterface
+    public function pop(): ?TaskInterface
     {
-        $taskData = null;
-
+        $task = null;
         if (msg_receive(
             $this->queue, 0,
             $msgType,
             $this->maxMessageSize,
-            $taskData,
+            $task,
             true
         )) {
-            $task = \Opis\Closure\unserialize($taskData);
-
-            return $task;
+            $task = $this->unserialize($task);
         }
 
-        return null;
+        return $task;
     }
 
-    public function __destruct()
+    public function clear(): void
     {
         msg_remove_queue($this->queue);
+        $this->queue = msg_get_queue($this->key);
     }
 }

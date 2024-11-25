@@ -4,6 +4,7 @@ namespace PhpWorkerPool;
 
 interface QueueInterface
 {
-    public function add(TaskInterface $task);
-    public function get(): ?TaskInterface;
+    public function push(TaskInterface $task);
+    public function pop(): ?TaskInterface;
+    public function clear(): void;
 }
