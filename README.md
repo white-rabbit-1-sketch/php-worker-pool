@@ -2,6 +2,26 @@
 
 A lightweight PHP library for managing worker pools with shared memory and task queues using **System V Message Queues** and **Redis**.
 
+### Table of Contents
+
+1. [PHP Worker Pool](#php-worker-pool)
+2. [Features](#features)
+3. [Queue Types](#queue-types)
+   - [SysV Message Queues](#sysv-message-queues)
+   - [Redis Queue](#redis-queue)
+   - [Creating Custom Queues](#creating-custom-queues)
+4. [Modes of Operation](#modes-of-operation)
+   - [Infinite Loop](#infinite-loop)
+   - [Fixed Loop](#fixed-loop)
+5. [How It Works](#how-it-works)
+6. [Quick Start](#quick-start)
+   - [Installation](#installation)
+   - [Examples](#examples)
+7. [Who This Library Is For](#who-this-library-is-for)
+   - [Why Choose This Library?](#why-choose-this-library)
+   - [Comparison with Other Solutions](#comparison-with-other-solutions)
+8. [Author and License](#author-and-license)
+
 ## Features
 
 - **System V Message Queues** for efficient inter-process communication.
