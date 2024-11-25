@@ -28,17 +28,30 @@ Additionally, by using **System V message queues**, tasks don't necessarily have
 The library provides **two queue types** that you can use to store and manage tasks:
 
 ### 1. **SysV Message Queues**
-- **System V Message Queues** allow for efficient communication between processes within the same system.
-- They are accessed using the `sysvmsg` PHP extension.
-- Tasks are serialized before being added to the queue and deserialized when retrieved.
-- SysV queues are persistent until explicitly removed or the system reboots.
-- Suitable for environments where you need to keep tasks within a single machine and process them in isolation.
+- **System V Message Queues** provide a simple, in-memory message-passing mechanism for inter-process communication. They are a great choice for tasks that need to be processed on the same system without requiring external services like Redis.
+- Tasks are serialized before being added to the queue, and they are deserialized when retrieved by workers.
+- **Pros**: Simple to set up, minimal dependencies (requires `sysvmsg` PHP extension), very fast for local, intra-machine communication.
+- **Cons**: Limited to the local machine, not suitable for distributed systems.
+- **Queue Persistence**: Queues are persistent across reboots until they are explicitly removed by the system or through code.
+
+**Key Features**:
+- **Isolation**: Each queue is uniquely identified by a key, ensuring that messages are isolated between different queues.
+- **Concurrency**: Multiple worker processes can simultaneously consume tasks from the queue, making it suitable for high concurrency.
 
 ### 2. **Redis Queue**
-- **Redis** provides a more scalable approach for inter-process communication, allowing you to use Redis servers for message brokering.
-- Redis supports **persistent storage**, which makes it ideal for larger, distributed systems.
-- Redis queues are flexible and can be accessed by multiple machines, providing high availability.
-- Redis queues also support features like **blocking pop** and **publish/subscribe** for more complex use cases.
+- **Redis** is a highly scalable, distributed key-value store, often used as a message broker for queues. Redis queues allow tasks to be managed across multiple machines and can support high availability and fault tolerance.
+- The library provides a simple interface to interact with Redis lists (`LPUSH` for pushing tasks and `RPOP` for pop operations).
+- **Pros**: Highly scalable, networked queues, supports multiple workers across different machines, persistent storage.
+- **Cons**: Requires a running Redis instance, more complex setup for distributed systems.
+- **Queue Persistence**: Tasks in Redis queues persist across restarts, ensuring reliability in distributed systems.
+
+**Key Features**:
+- **Scalability**: Redis allows task queues to be managed across different machines, making it a good choice for distributed systems.
+- **Redis Pub/Sub**: You can extend redis queue to get support for advanced scenarios involving integrating Redis' pub/sub features to notify workers of new tasks.
+
+### 3. **Creating Custom Queues**
+
+While the library comes with two built-in queue implementations (SysV and Redis), it is also flexible enough to allow you to create your own custom queue. You can implement a queue using any storage mechanism that you prefer (e.g., databases, files, etc.).
 
 ## Modes of Operation
 
