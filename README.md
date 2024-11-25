@@ -261,3 +261,12 @@ The PHP Worker Pool library is designed for developers who need a **lightweight*
 ### Summary
 
 By choosing this library, developers can take advantage of **high-performance task processing** with **minimal configuration overhead**, **local resource management**, and **efficient concurrency**, without the need to rely on external systems or complex message queues. This makes it an ideal choice for many PHP-based applications looking for simple, efficient, and lightweight task processing.
+
+## Author and License
+
+**Author**: Mikhail Chuloshnikov  
+Email: [sky.invermind@gmail.com](mailto:sky.invermind@gmail.com)
+
+**License**: MIT License
+
+This library is released under the MIT License. See the [LICENSE](LICENSE) file for more details.
