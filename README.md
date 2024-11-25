@@ -74,5 +74,12 @@ for ($i = 0; $i < 20; $i++) {
 
 $pool = new Pool($queue);
 $pool->start();
+
+// if you'd like you can add tasks after pool is started too
+$queue->add(new ClosureTask(function () {
+    echo microtime() . PHP_EOL;
+    sleep(5);
+}));
+
 $pool->wait();
 ```
