@@ -53,7 +53,7 @@ composer require white-rabbit-1-sketch/php-worker-pool
 
 ### Examples
 
-Exampla for Sys V Queue:
+Example for Sys V Queue with infinite loop:
 
 ```php
 <?php
@@ -80,7 +80,7 @@ $pool->wait();
 $pool->stop();
 ```
 
-Exampla for Redis Queue:
+Example for Redis Queue with infinite loop:
 
 ```php
 <?php
@@ -112,5 +112,68 @@ for ($i = 0; $i < 20; $i++) {
 
 $pool->wait();
 $pool->stop();
+```
 
+
+
+
+Example for Sys V Queue with fixed loop:
+
+```php
+<?php
+
+use PhpWorkerPool\ClosureTask;
+use PhpWorkerPool\Pool;
+use PhpWorkerPool\Queue\SysVQueue;
+
+require_once "../vendor/autoload.php";
+
+$queue = new SysVQueue(1234567);
+
+$pool = new Pool($queue, infinite: false);
+
+for ($i = 0; $i < 20; $i++) {
+    $queue->push(new ClosureTask(function () {
+        echo microtime() . PHP_EOL;
+        sleep(1);
+    }));
+}
+
+$pool->start();
+$pool->wait();
+$pool->stop();
+```
+
+Example for Redis Queue with fixed loop:
+
+```php
+<?php
+
+use PhpWorkerPool\ClosureTask;
+use PhpWorkerPool\Pool;
+use PhpWorkerPool\Queue\RedisQueue;
+use Predis\Client as RedisClient;
+
+require_once "../vendor/autoload.php";
+
+$redisClient = new RedisClient([
+    'scheme' => 'tcp',
+    'host'   => 'localhost',
+    'port'   => 6379,
+]);
+$redisClient->connect();
+$queue = new RedisQueue($redisClient, "test-queue", 123);
+
+$pool = new Pool($queue, infinite: false);
+
+for ($i = 0; $i < 20; $i++) {
+    $queue->push(new ClosureTask(function () {
+        echo microtime() . PHP_EOL;
+        sleep(1);
+    }));
+}
+
+$pool->start();
+$pool->wait();
+$pool->stop();
 ```

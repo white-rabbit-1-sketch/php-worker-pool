@@ -37,17 +37,12 @@ class RedisQueue extends AbstractQueue
 
     public function pop(): ?TaskInterface
     {
-        $task = null;
-        while(!$task) {
-            sem_acquire($this->semaphore);
-            try {
-                $task = $this->redis->rpop($this->queueName);
-                $task = $task ? $this->unserialize($task) : null;
-            } finally {
-                sem_release($this->semaphore);
-            }
-
-            sleep(1);
+        sem_acquire($this->semaphore);
+        try {
+            $task = $this->redis->rpop($this->queueName);
+            $task = $task ? $this->unserialize($task) : null;
+        } finally {
+            sem_release($this->semaphore);
         }
 
         return $task;

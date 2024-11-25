@@ -1,6 +1,8 @@
 <?php
 
-namespace PhpWorkerPool;
+namespace PhpWorkerPool\Queue;
+
+use PhpWorkerPool\TaskInterface;
 
 interface QueueInterface
 {

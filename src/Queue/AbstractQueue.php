@@ -2,8 +2,6 @@
 
 namespace PhpWorkerPool\Queue;
 
-use PhpWorkerPool\QueueInterface;
-
 abstract class AbstractQueue implements QueueInterface
 {
     protected function serialize($data): string

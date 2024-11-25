@@ -39,14 +39,17 @@ class SysVQueue extends AbstractQueue
     public function pop(): ?TaskInterface
     {
         $task = null;
+        $msg = null;
         if (msg_receive(
-            $this->queue, 0,
+            $this->queue,
+            0,
             $msgType,
             $this->maxMessageSize,
-            $task,
-            true
+            $msg,
+            true,
+            MSG_IPC_NOWAIT
         )) {
-            $task = $this->unserialize($task);
+            $task = $this->unserialize($msg);
         }
 
         return $task;
