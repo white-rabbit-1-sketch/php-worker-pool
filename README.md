@@ -58,21 +58,21 @@ Add tasks to the queue using `ClosureTask`:
 <?php
 
 use PhpWorkerPool\Queue;
+use PhpWorkerPool\ClosureTask;
+use PhpWorkerPool\Pool;
 
 require_once "vendor/autoload.php";
 
-// Create a queue with a unique key
 $queue = new Queue(1234567);
 
-// Add 20 tasks to the queue
 for ($i = 0; $i < 20; $i++) {
-    $queue->add(new \PhpWorkerPool\ClosureTask(function () {
+    $queue->add(new ClosureTask(function () {
         echo microtime() . PHP_EOL;
-        sleep(5); // Simulate a long-running task
+        sleep(5);
     }));
 }
 
-$pool = new \PhpWorkerPool\Pool($queue);
+$pool = new Pool($queue);
 $pool->start();
 $pool->wait();
 ```
