@@ -14,8 +14,6 @@ class PoolTest extends TestCase
     public function testPool(): void
     {
         $queue = new SysVQueue(self::QUEUE_KEY);
-        $pool = new Pool($queue, infinite: false);
-        $pool->start();
 
         $filePaths = [];
         for ($i = 0; $i < 20; $i++) {
@@ -26,6 +24,8 @@ class PoolTest extends TestCase
             $filePaths[] = $tempFilePath;
         }
 
+        $pool = new Pool($queue, infinite: false);
+        $pool->start();
         $pool->wait();
         $pool->stop();
 
