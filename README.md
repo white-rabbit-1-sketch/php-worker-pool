@@ -2,7 +2,7 @@
 
 ![Latest Version](https://img.shields.io/github/v/tag/white-rabbit-1-sketch/php-worker-pool)
 ![Phpunit](https://img.shields.io/github/actions/workflow/status/white-rabbit-1-sketch/php-worker-pool/.github%2Fworkflows%2Fphpunit.yml)
-[![codecov](https://codecov.io/github/white-rabbit-1-sketch/php-file-hash-map/graph/badge.svg?token=3TJ9GL4OAS)](https://codecov.io/github/white-rabbit-1-sketch/php-file-hash-map)
+[![codecov](https://codecov.io/gh/white-rabbit-1-sketch/php-worker-pool/graph/badge.svg?token=V4XNQ9FDEK)](https://codecov.io/gh/white-rabbit-1-sketch/php-worker-pool)
 
 ![Banner](readme/assets/img/banner.png)
 
