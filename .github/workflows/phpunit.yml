@@ -17,10 +17,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-
-      - name: Install Xdebug
-        run: |
-          sudo apt install php8.1-xdebug
+          extensions: pcntl, xdebug
 
       - name: Install dependencies
         run: |
