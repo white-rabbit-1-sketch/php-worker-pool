@@ -1,5 +1,11 @@
 # PHP Worker Pool 
 
+![Latest Version](https://img.shields.io/github/v/tag/white-rabbit-1-sketch/php-worker-pool)
+![Phpunit](https://img.shields.io/github/actions/workflow/status/white-rabbit-1-sketch/php-worker-pool/.github%2Fworkflows%2Fphpunit.yml)
+[![codecov](https://codecov.io/github/white-rabbit-1-sketch/php-file-hash-map/graph/badge.svg?token=3TJ9GL4OAS)](https://codecov.io/github/white-rabbit-1-sketch/php-file-hash-map)
+
+![Banner](readme/assets/img/banner.png)
+
 A lightweight PHP library for managing worker pools with shared memory and task queues using **System V Message Queues** and **Redis**.
 
 ### Table of Contents
