@@ -10,23 +10,29 @@ A lightweight PHP library for managing worker pools with shared memory and task 
 
 ### Table of Contents
 
-1. [PHP Worker Pool](#php-worker-pool)
-2. [Features](#features)
-3. [Queue Types](#queue-types)
-   - [SysV Message Queues](#sysv-message-queues)
-   - [Redis Queue](#redis-queue)
-   - [Creating Custom Queues](#creating-custom-queues)
-4. [Modes of Operation](#modes-of-operation)
-   - [Infinite Loop](#infinite-loop)
-   - [Fixed Loop](#fixed-loop)
-5. [How It Works](#how-it-works)
-6. [Quick Start](#quick-start)
+1. [Features](#features)
+2. [Quick Start](#quick-start)
    - [Installation](#installation)
    - [Examples](#examples)
-7. [Who This Library Is For](#who-this-library-is-for)
+      - [SysV Queue (Infinite Loop)](#example-for-sys-v-queue-with-infinite-loop)
+      - [Redis Queue (Infinite Loop)](#example-for-redis-queue-with-infinite-loop)
+      - [SysV Queue (Fixed Loop)](#example-for-sys-v-queue-with-fixed-loop)
+      - [Redis Queue (Fixed Loop)](#example-for-redis-queue-with-fixed-loop)
+3. [Queue Types](#queue-types)
+   - [SysV Message Queues](#1-sysv-message-queues)
+   - [Redis Queue](#2-redis-queue)
+   - [Creating Custom Queues](#3-creating-custom-queues)
+4. [Modes of Operation](#modes-of-operation)
+   - [Infinite Loop (Default)](#1-infinite-loop-default-mode)
+   - [Fixed Loop](#2-fixed-loop)
+5. [How It Works](#how-it-works)
+   - [System V Queues](#key-features-of-system-v-message-queues)
+   - [Queue Implementation](#queue-implementation)
+6. [Who This Library Is For](#who-this-library-is-for)
    - [Why Choose This Library?](#why-choose-this-library)
+   - [Use Cases](#use-cases)
    - [Comparison with Other Solutions](#comparison-with-other-solutions)
-8. [Author and License](#author-and-license)
+7. [Author and License](#author-and-license)
 
 ## Features
 
@@ -40,67 +46,6 @@ A lightweight PHP library for managing worker pools with shared memory and task 
 - Task types are extendable: simply implement the `TaskInterface` to create custom task types.
 - Two queue options: **SysV Message Queues** and **Redis Queue**.
 - Two working modes: **Infinite Loop** and **Fixed Loop** (process tasks until the queue is empty).
-
----
-
-## Queue Types
-
-The library provides **two queue types** that you can use to store and manage tasks:
-
-### 1. **SysV Message Queues**
-- **System V Message Queues** provide a simple, in-memory message-passing mechanism for inter-process communication. They are a great choice for tasks that need to be processed on the same system without requiring external services like Redis.
-- Tasks are serialized before being added to the queue, and they are deserialized when retrieved by workers.
-- **Pros**: Simple to set up, minimal dependencies (requires `sysvmsg` PHP extension), very fast for local, intra-machine communication.
-- **Cons**: Limited to the local machine, not suitable for distributed systems.
-- **Queue Persistence**: Queues are persistent across reboots until they are explicitly removed by the system or through code.
-
-**Key Features**:
-- **Isolation**: Each queue is uniquely identified by a key, ensuring that messages are isolated between different queues.
-- **Concurrency**: Multiple worker processes can simultaneously consume tasks from the queue, making it suitable for high concurrency.
-
-### 2. **Redis Queue**
-- **Redis** is a highly scalable, distributed key-value store, often used as a message broker for queues. Redis queues allow tasks to be managed across multiple machines and can support high availability and fault tolerance.
-- The library provides a simple interface to interact with Redis lists (`LPUSH` for pushing tasks and `RPOP` for pop operations).
-- **Pros**: Highly scalable, networked queues, supports multiple workers across different machines, persistent storage.
-- **Cons**: Requires a running Redis instance, more complex setup for distributed systems.
-- **Queue Persistence**: Tasks in Redis queues persist across restarts, ensuring reliability in distributed systems.
-
-**Key Features**:
-- **Scalability**: Redis allows task queues to be managed across different machines, making it a good choice for distributed systems.
-- **Redis Pub/Sub**: You can extend redis queue to get support for advanced scenarios involving integrating Redis' pub/sub features to notify workers of new tasks.
-
-### 3. **Creating Custom Queues**
-
-While the library comes with two built-in queue implementations (SysV and Redis), it is also flexible enough to allow you to create your own custom queue. You can implement a queue using any storage mechanism that you prefer (e.g., databases, files, etc.).
-
-## Modes of Operation
-
-This library supports **two operating modes** for processing tasks in the queue:
-
-### 1. **Infinite Loop (Default Mode)**
-- The worker pool will keep processing tasks **indefinitely** until it is explicitly stopped.
-- Ideal for long-running processes where new tasks are added continuously to the queue.
-- This mode is typically used in **daemon**-like applications.
-
-### 2. **Fixed Loop**
-- The worker pool will process a **fixed number of tasks** (until the queue is empty) and then stop.
-- This mode is useful when you want the worker pool to process a set of tasks and then exit.
-- For example, you may want to run a worker pool for a single job batch or when you don't want workers running indefinitely.
-
-## How It Works
-
-The library leverages **System V message queues** (using the `sysvmsg` PHP extension) or **Redis** to enable efficient communication between processes. Each queue is identified by a unique key and allows processes to exchange serialized messages.
-
-### Key Features of System V Message Queues
-
-- **Isolation**: Each queue is uniquely identified by a key, ensuring data integrity between different queues.
-- **Persistence**: Queues persist in the operating system until explicitly removed or the system is rebooted.
-- **Concurrency**: Multiple processes can read from and write to the queue simultaneously, making it ideal for worker pools.
-
-### Queue Implementation
-
-- **Adding Tasks**: Tasks are serialized and added to the queue using `msg_send` for SysV or `lpush` for Redis. The library ensures compatibility with closures via the `opis/closure` library, allowing complex callable structures to be safely serialized and deserialized.
-- **Retrieving Tasks**: Workers fetch tasks from the queue using `msg_receive` for SysV or `rpop/brpop` for Redis, ensuring that each task is processed only once.
 
 ---
 
@@ -243,6 +188,69 @@ $pool->start();
 $pool->wait();
 $pool->stop();
 ```
+
+---
+
+## Queue Types
+
+The library provides **two queue types** that you can use to store and manage tasks:
+
+### 1. **SysV Message Queues**
+- **System V Message Queues** provide a simple, in-memory message-passing mechanism for inter-process communication. They are a great choice for tasks that need to be processed on the same system without requiring external services like Redis.
+- Tasks are serialized before being added to the queue, and they are deserialized when retrieved by workers.
+- **Pros**: Simple to set up, minimal dependencies (requires `sysvmsg` PHP extension), very fast for local, intra-machine communication.
+- **Cons**: Limited to the local machine, not suitable for distributed systems.
+- **Queue Persistence**: Queues are persistent across reboots until they are explicitly removed by the system or through code.
+
+**Key Features**:
+- **Isolation**: Each queue is uniquely identified by a key, ensuring that messages are isolated between different queues.
+- **Concurrency**: Multiple worker processes can simultaneously consume tasks from the queue, making it suitable for high concurrency.
+
+### 2. **Redis Queue**
+- **Redis** is a highly scalable, distributed key-value store, often used as a message broker for queues. Redis queues allow tasks to be managed across multiple machines and can support high availability and fault tolerance.
+- The library provides a simple interface to interact with Redis lists (`LPUSH` for pushing tasks and `RPOP` for pop operations).
+- **Pros**: Highly scalable, networked queues, supports multiple workers across different machines, persistent storage.
+- **Cons**: Requires a running Redis instance, more complex setup for distributed systems.
+- **Queue Persistence**: Tasks in Redis queues persist across restarts, ensuring reliability in distributed systems.
+
+**Key Features**:
+- **Scalability**: Redis allows task queues to be managed across different machines, making it a good choice for distributed systems.
+- **Redis Pub/Sub**: You can extend redis queue to get support for advanced scenarios involving integrating Redis' pub/sub features to notify workers of new tasks.
+
+### 3. **Creating Custom Queues**
+
+While the library comes with two built-in queue implementations (SysV and Redis), it is also flexible enough to allow you to create your own custom queue. You can implement a queue using any storage mechanism that you prefer (e.g., databases, files, etc.).
+
+## Modes of Operation
+
+This library supports **two operating modes** for processing tasks in the queue:
+
+### 1. **Infinite Loop (Default Mode)**
+- The worker pool will keep processing tasks **indefinitely** until it is explicitly stopped.
+- Ideal for long-running processes where new tasks are added continuously to the queue.
+- This mode is typically used in **daemon**-like applications.
+
+### 2. **Fixed Loop**
+- The worker pool will process a **fixed number of tasks** (until the queue is empty) and then stop.
+- This mode is useful when you want the worker pool to process a set of tasks and then exit.
+- For example, you may want to run a worker pool for a single job batch or when you don't want workers running indefinitely.
+
+## How It Works
+
+The library leverages **System V message queues** (using the `sysvmsg` PHP extension) or **Redis** to enable efficient communication between processes. Each queue is identified by a unique key and allows processes to exchange serialized messages.
+
+### Key Features of System V Message Queues
+
+- **Isolation**: Each queue is uniquely identified by a key, ensuring data integrity between different queues.
+- **Persistence**: Queues persist in the operating system until explicitly removed or the system is rebooted.
+- **Concurrency**: Multiple processes can read from and write to the queue simultaneously, making it ideal for worker pools.
+
+### Queue Implementation
+
+- **Adding Tasks**: Tasks are serialized and added to the queue using `msg_send` for SysV or `lpush` for Redis. The library ensures compatibility with closures via the `opis/closure` library, allowing complex callable structures to be safely serialized and deserialized.
+- **Retrieving Tasks**: Workers fetch tasks from the queue using `msg_receive` for SysV or `rpop/brpop` for Redis, ensuring that each task is processed only once.
+
+---
 
 ## Who This Library Is For
 
