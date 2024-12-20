@@ -20,15 +20,12 @@ A lightweight PHP library for managing worker pools with shared memory and task 
 - Task types are extendable: simply implement the `TaskInterface` to create custom task types.
 - Two queue options: **SysV Message Queues** and **Redis Queue**.
 - Two working modes: **Infinite Loop** and **Fixed Loop** (process tasks until the queue is empty).
----
 
-⭐️ Star the Project
+## ⭐️ Star the Project
 
 If you found this project useful, please consider giving it a star! 🌟 Your support helps improve the project and motivates us to keep adding new features and improvements. Thank you! 🙏
 
----
-
-### Table of Contents
+## Table of Contents
 
 1. [Features](#features)
 2. [Quick Start](#quick-start)
