@@ -26,6 +26,8 @@ A lightweight PHP library for managing worker pools with shared memory and task 
 
 If you found this project useful, please consider giving it a star! 🌟 Your support helps improve the project and motivates us to keep adding new features and improvements. Thank you! 🙏
 
+---
+
 ### Table of Contents
 
 1. [Features](#features)
