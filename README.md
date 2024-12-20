@@ -8,6 +8,24 @@
 
 A lightweight PHP library for managing worker pools with shared memory and task queues using **System V Message Queues** and **Redis**.
 
+## Features
+
+- **System V Message Queues** for efficient inter-process communication.
+- **Redis Queue** for scalable, networked message handling.
+- Simple worker pool implementation using process forking.
+- Supports closures and custom task implementations via `TaskInterface`.
+- Graceful handling of blocking operations.
+- Lightweight and optimized for CLI usage.
+- Queue easily extendable: implement custom queues with any storage system (e.g., Redis, databases) by extending the `QueueInterface`.
+- Task types are extendable: simply implement the `TaskInterface` to create custom task types.
+- Two queue options: **SysV Message Queues** and **Redis Queue**.
+- Two working modes: **Infinite Loop** and **Fixed Loop** (process tasks until the queue is empty).
+---
+
+⭐️ Star the Project
+
+If you found this project useful, please consider giving it a star! 🌟 Your support helps improve the project and motivates us to keep adding new features and improvements. Thank you! 🙏
+
 ### Table of Contents
 
 1. [Features](#features)
@@ -33,26 +51,6 @@ A lightweight PHP library for managing worker pools with shared memory and task 
    - [Use Cases](#use-cases)
    - [Comparison with Other Solutions](#comparison-with-other-solutions)
 7. [Author and License](#author-and-license)
-
-## Features
-
-- **System V Message Queues** for efficient inter-process communication.
-- **Redis Queue** for scalable, networked message handling.
-- Simple worker pool implementation using process forking.
-- Supports closures and custom task implementations via `TaskInterface`.
-- Graceful handling of blocking operations.
-- Lightweight and optimized for CLI usage.
-- Queue easily extendable: implement custom queues with any storage system (e.g., Redis, databases) by extending the `QueueInterface`.
-- Task types are extendable: simply implement the `TaskInterface` to create custom task types.
-- Two queue options: **SysV Message Queues** and **Redis Queue**.
-- Two working modes: **Infinite Loop** and **Fixed Loop** (process tasks until the queue is empty).
----
-
-⭐️ Star the Project
-
-If you found this project useful, please consider giving it a star! 🌟 Your support helps improve the project and motivates us to keep adding new features and improvements. Thank you! 🙏
-
----
 
 ## Quick Start
 
